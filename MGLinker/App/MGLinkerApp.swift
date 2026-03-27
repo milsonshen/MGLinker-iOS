@@ -1,5 +1,6 @@
 import SwiftUI
 import ActivityKit
+import UserNotifications
 
 @main
 struct MGLinkerApp: App {
