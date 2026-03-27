@@ -1,0 +1,54 @@
+name: Build MG Linker iOS (No Signing)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build:
+    runs-on: macos-14
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Select Xcode version
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+      
+    - name: Show Xcode version
+      run: xcodebuild -version
+      
+    - name: Build iOS app (No Code Signing)
+      run: |
+        xcodebuild clean build \
+          -project MGLinker.xcodeproj \
+          -scheme MGLinker \
+          -configuration Release \
+          -sdk iphoneos \
+          -derivedDataPath build \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          PROVISIONING_PROFILE_SPECIFIER="" \
+          DEVELOPMENT_TEAM=""
+          
+    - name: Create Payload and IPA
+      run: |
+        mkdir -p build/Payload
+        cp -r build/Build/Products/Release-iphoneos/MGLinker.app build/Payload/
+        cd build
+        zip -r MGLinker.ipa Payload
+        
+    - name: Rename to TIPA
+      run: |
+        cp build/MGLinker.ipa build/MGLinker.tipa
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: MG-Linker-iOS
+        path: |
+          build/MGLinker.ipa
+          build/MGLinker.tipa
+        retention-days: 90
