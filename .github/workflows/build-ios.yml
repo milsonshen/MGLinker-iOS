@@ -16,20 +16,63 @@ jobs:
     - name: Setup Xcode
       run: |
         sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
-        xcodebuild -version
-        swift --version
         
-    - name: Build with Swift
+    - name: Build iOS app with xcodebuild
       run: |
-        swift build -c release --sdk iphoneos
+        # Create temporary Xcode project
+        mkdir -p build
+        cd build
         
-    - name: Create IPA structure
-      run: |
-        mkdir -p Payload/MGLinker.app
-        cp -r .build/release/MGLinker Payload/MGLinker.app/
+        # Create main.m
+        cat > main.m << 'EOF'
+        #import <UIKit/UIKit.h>
+        #import "AppDelegate.h"
         
-        # Create minimal Info.plist
-        cat > Payload/MGLinker.app/Info.plist << 'EOF'
+        int main(int argc, char * argv[]) {
+            @autoreleasepool {
+                return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+            }
+        }
+        EOF
+        
+        # Create AppDelegate
+        cat > AppDelegate.h << 'EOF'
+        #import <UIKit/UIKit.h>
+        
+        @interface AppDelegate : UIResponder <UIApplicationDelegate>
+        @property (strong, nonatomic) UIWindow *window;
+        @end
+        EOF
+        
+        cat > AppDelegate.m << 'EOF'
+        #import "AppDelegate.h"
+        
+        @implementation AppDelegate
+        
+        - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+            self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+            
+            UIViewController *viewController = [[UIViewController alloc] init];
+            viewController.view.backgroundColor = [UIColor whiteColor];
+            
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 100)];
+            label.text = @"MG Linker\niOS版本";
+            label.numberOfLines = 2;
+            label.textAlignment = NSTextAlignmentCenter;
+            label.center = viewController.view.center;
+            [viewController.view addSubview:label];
+            
+            self.window.rootViewController = viewController;
+            [self.window makeKeyAndVisible];
+            
+            return YES;
+        }
+        
+        @end
+        EOF
+        
+        # Create Info.plist
+        cat > Info.plist << 'EOF'
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
         <plist version="1.0">
@@ -52,16 +95,43 @@ jobs:
             <array>
                 <string>arm64</string>
             </array>
+            <key>UISupportedInterfaceOrientations</key>
+            <array>
+                <string>UIInterfaceOrientationPortrait</string>
+            </array>
         </dict>
         </plist>
         EOF
         
         # Create PkgInfo
-        echo -n "APPL????" > Payload/MGLinker.app/PkgInfo
+        echo -n "APPL????" > PkgInfo
         
-        # Create IPA
-        zip -r MGLinker.ipa Payload
+        # Build with clang
+        xcrun -sdk iphoneos clang \
+            -arch arm64 \
+            -isysroot $(xcrun -sdk iphoneos --show-sdk-path) \
+            -fobjc-arc \
+            -mios-version-min=16.0 \
+            -o MGLinker \
+            main.m AppDelegate.m \
+            -framework UIKit -framework Foundation
+            
+        # Create .app bundle
+        mkdir -p MGLinker.app
+        mv MGLinker MGLinker.app/
+        cp Info.plist MGLinker.app/
+        cp PkgInfo MGLinker.app/
+        
+    - name: Create IPA
+      run: |
+        cd build
+        mkdir -p Payload
+        cp -r MGLinker.app Payload/
+        zip -r ../MGLinker.ipa Payload
+        cd ..
         cp MGLinker.ipa MGLinker.tipa
+        ls -la MGLinker.*
+        du -h MGLinker.*
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
