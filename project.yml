@@ -1,0 +1,90 @@
+name: MGLinker
+options:
+  bundleIdPrefix: com.mglinker
+  deploymentTarget:
+    iOS: 16.0
+  createIntermediateGroups: true
+  findCarthageFrameworks: false
+
+settings:
+  configs:
+    Debug:
+      DEBUG: 1
+    Release: {}
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: com.mglinker.app
+    INFOPLIST_FILE: MGLinker/App/Info.plist
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
+
+targets:
+  MGLinker:
+    type: application
+    platform: iOS
+    sources:
+      - path: MGLinker/App
+      - path: MGLinker/Models
+      - path: MGLinker/Views
+      - path: MGLinker/ViewModels
+      - path: MGLinker/Services
+      - path: MGLinker/Extensions
+      - path: MGLinker/Resources
+    settings:
+      base:
+        INFOPLIST_FILE: MGLinker/App/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.mglinker.app
+    info:
+      path: MGLinker/App/Info.plist
+      properties:
+        CFBundleDisplayName: MG Linker
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        UILaunchStoryboardName: LaunchScreen
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        NSBluetoothAlwaysUsageDescription: MG Linker需要使用蓝牙来连接您的车辆
+        NSLocationWhenInUseUsageDescription: MG Linker需要访问您的位置
+        
+  MGLinkerWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: MGLinkerWidget
+    settings:
+      base:
+        INFOPLIST_FILE: MGLinkerWidget/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.mglinker.app.widget
+    info:
+      path: MGLinkerWidget/Info.plist
+      properties:
+        CFBundleDisplayName: MG Linker Widget
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  MGLinkerLiveActivity:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: MGLinkerLiveActivity
+    settings:
+      base:
+        INFOPLIST_FILE: MGLinkerLiveActivity/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.mglinker.app.liveactivity
+    info:
+      path: MGLinkerLiveActivity/Info.plist
+      properties:
+        CFBundleDisplayName: MG Linker Live Activity
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+schemes:
+  MGLinker:
+    build:
+      targets:
+        MGLinker: all
+    run:
+      config: Release
+    archive:
+      config: Release
