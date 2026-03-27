@@ -2,20 +2,24 @@ import SwiftUI
 
 @main
 struct MGLinkerApp: App {
-    @StateObject private var vehicleManager = VehicleManager.shared
-    @StateObject private var bluetoothManager = BluetoothManager.shared
-    @AppStorage("isConfigured") private var isConfigured = false
-    
     var body: some Scene {
         WindowGroup {
-            if isConfigured {
-                MainTabView()
-                    .environmentObject(vehicleManager)
-                    .environmentObject(bluetoothManager)
-            } else {
-                ConfigurationView()
-                    .environmentObject(vehicleManager)
-            }
+            ContentView()
         }
+    }
+}
+
+struct ContentView: View {
+    var body: some View {
+        VStack {
+            Image(systemName: "car.fill")
+                .font(.system(size: 60))
+                .foregroundColor(.blue)
+            Text("MG Linker")
+                .font(.title)
+            Text("iOS版本开发中")
+                .foregroundColor(.gray)
+        }
+        .padding()
     }
 }

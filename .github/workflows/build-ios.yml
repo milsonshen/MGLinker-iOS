@@ -26,9 +26,11 @@ jobs:
       run: |
         xcodegen generate
         ls -la
+        cat MGLinker.xcodeproj/project.pbxproj | head -50
         
     - name: Build iOS app
       run: |
+        set -o pipefail
         xcodebuild clean build \
           -project MGLinker.xcodeproj \
           -scheme MGLinker \
@@ -38,15 +40,19 @@ jobs:
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
-          | xcpretty || true
+          2>&1 | tee build.log
           
-    - name: Check build output
+    - name: Show build log if failed
+      if: failure()
       run: |
-        echo "=== Checking build output ==="
+        echo "=== BUILD LOG ==="
+        cat build.log
+        echo "=== DERIVED DATA ==="
+        ls -la build/
         find build -name "*.app" -type d
-        ls -la build/Build/Products/ || echo "No Products folder"
         
     - name: Create IPA
+      if: success()
       run: |
         APP_PATH=$(find build -name "MGLinker.app" -type d | head -1)
         if [ -n "$APP_PATH" ]; then
@@ -58,12 +64,16 @@ jobs:
           cp MGLinker.ipa MGLinker.tipa
           echo "IPA created successfully"
           ls -la MGLinker.*
+          du -h MGLinker.*
         else
           echo "ERROR: MGLinker.app not found"
+          echo "=== Build contents ==="
+          find build -type f
           exit 1
         fi
         
     - name: Upload artifacts
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: MG-Linker-iOS

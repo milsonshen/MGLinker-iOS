@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDevelopmentRegion</key>
-    <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <string>en</string>
     <key>CFBundleDisplayName</key>
     <string>MG Linker</string>
     <key>CFBundleExecutable</key>
@@ -15,7 +15,7 @@
     <key>CFBundleName</key>
     <string>$(PRODUCT_NAME)</string>
     <key>CFBundlePackageType</key>
-    <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+    <string>APPL</string>
     <key>CFBundleShortVersionString</key>
     <string>1.0</string>
     <key>CFBundleVersion</key>
@@ -26,23 +26,9 @@
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>
         <false/>
-        <key>UISceneConfigurations</key>
-        <dict>
-            <key>UIWindowSceneSessionRoleApplication</key>
-            <array>
-                <dict>
-                    <key>UISceneConfigurationName</key>
-                    <string>Default Configuration</string>
-                    <key>UISceneDelegateClassName</key>
-                    <string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
-                </dict>
-            </array>
-        </dict>
     </dict>
-    <key>UIApplicationSupportsIndirectInputEvents</key>
-    <true/>
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
+    <key>UILaunchScreen</key>
+    <dict/>
     <key>UIRequiredDeviceCapabilities</key>
     <array>
         <string>armv7</string>
@@ -50,38 +36,6 @@
     <key>UISupportedInterfaceOrientations</key>
     <array>
         <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationPortraitUpsideDown</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>MG Linker需要使用蓝牙来连接您的车辆，实现数字钥匙功能</string>
-    <key>NSBluetoothPeripheralUsageDescription</key>
-    <string>MG Linker需要使用蓝牙来连接您的车辆，实现数字钥匙功能</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>MG Linker需要访问您的位置来显示车辆位置信息</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>MG Linker需要访问您的位置来显示车辆位置信息</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>MG Linker需要访问您的位置来显示车辆位置信息</string>
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>bluetooth-central</string>
-        <string>fetch</string>
-        <string>remote-notification</string>
-    </array>
-    <key>com.apple.developer.activity-kit</key>
-    <true/>
 </dict>
 </plist>

@@ -3,43 +3,22 @@ options:
   bundleIdPrefix: com.mglinker
   deploymentTarget:
     iOS: 16.0
-  createIntermediateGroups: true
 
 settings:
   base:
     IPHONEOS_DEPLOYMENT_TARGET: "16.0"
     SWIFT_VERSION: "5.0"
-    TARGETED_DEVICE_FAMILY: "1,2"
 
 targets:
   MGLinker:
     type: application
     platform: iOS
     sources:
-      - path: MGLinker
+      - path: MGLinker/App
     settings:
-      base:
-        INFOPLIST_FILE: MGLinker/App/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.mglinker.app
+      INFOPLIST_FILE: MGLinker/App/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: com.mglinker.app
+      CODE_SIGNING_ALLOWED: NO
+      CODE_SIGNING_REQUIRED: NO
     info:
       path: MGLinker/App/Info.plist
-      properties:
-        CFBundleDisplayName: MG Linker
-        CFBundleShortVersionString: "1.0"
-        CFBundleVersion: "1"
-        UILaunchStoryboardName: LaunchScreen
-        NSAppTransportSecurity:
-          NSAllowsArbitraryLoads: true
-        NSBluetoothAlwaysUsageDescription: MG Linker需要使用蓝牙来连接您的车辆
-        NSLocationWhenInUseUsageDescription: MG Linker需要访问您的位置
-        UIBackgroundModes:
-          - bluetooth-central
-          - fetch
-
-schemes:
-  MGLinker:
-    build:
-      targets:
-        MGLinker: all
-    run:
-      config: Release
