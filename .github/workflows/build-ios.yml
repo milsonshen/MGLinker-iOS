@@ -20,10 +20,13 @@ jobs:
       run: |
         sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
         xcodebuild -version
+        swift --version
         
     - name: Generate Xcode project
-      run: xcodegen generate
-      
+      run: |
+        xcodegen generate
+        ls -la
+        
     - name: Build iOS app
       run: |
         xcodebuild clean build \
@@ -34,15 +37,31 @@ jobs:
           -derivedDataPath build \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
+          CODE_SIGNING_ALLOWED=NO \
+          | xcpretty || true
           
+    - name: Check build output
+      run: |
+        echo "=== Checking build output ==="
+        find build -name "*.app" -type d
+        ls -la build/Build/Products/ || echo "No Products folder"
+        
     - name: Create IPA
       run: |
-        mkdir -p build/Payload
-        cp -r build/Build/Products/Release-iphoneos/MGLinker.app build/Payload/
-        cd build
-        zip -r MGLinker.ipa Payload
-        cp MGLinker.ipa MGLinker.tipa
+        APP_PATH=$(find build -name "MGLinker.app" -type d | head -1)
+        if [ -n "$APP_PATH" ]; then
+          echo "Found app at: $APP_PATH"
+          mkdir -p build/Payload
+          cp -r "$APP_PATH" build/Payload/
+          cd build
+          zip -r MGLinker.ipa Payload
+          cp MGLinker.ipa MGLinker.tipa
+          echo "IPA created successfully"
+          ls -la MGLinker.*
+        else
+          echo "ERROR: MGLinker.app not found"
+          exit 1
+        fi
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v4

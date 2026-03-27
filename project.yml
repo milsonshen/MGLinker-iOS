@@ -36,30 +36,10 @@ targets:
           - bluetooth-central
           - fetch
 
-  MGLinkerWidget:
-    type: app-extension
-    platform: iOS
-    sources:
-      - path: MGLinkerWidget
-      - path: MGLinker/Models/VehicleModels.swift
-    dependencies:
-      - target: MGLinker
-    settings:
-      base:
-        INFOPLIST_FILE: MGLinkerWidget/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.mglinker.app.widget
-    info:
-      path: MGLinkerWidget/Info.plist
-      properties:
-        CFBundleDisplayName: MG Linker Widget
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.widgetkit-extension
-
 schemes:
   MGLinker:
     build:
       targets:
         MGLinker: all
-        MGLinkerWidget: all
     run:
       config: Release

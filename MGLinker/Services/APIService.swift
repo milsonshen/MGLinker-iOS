@@ -1,4 +1,5 @@
 import Foundation
+import CoreLocation
 
 class APIService {
     static let shared = APIService()
