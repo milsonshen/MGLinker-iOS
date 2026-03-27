@@ -21,7 +21,6 @@ targets:
       base:
         INFOPLIST_FILE: MGLinker/App/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.mglinker.app
-        CODE_SIGN_ENTITLEMENTS: MGLinker/App/MGLinker.entitlements
     info:
       path: MGLinker/App/Info.plist
       properties:
@@ -56,29 +55,11 @@ targets:
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
-  MGLinkerLiveActivity:
-    type: app-extension
-    platform: iOS
-    sources:
-      - path: MGLinkerLiveActivity
-      - path: MGLinker/Models/VehicleModels.swift
-    dependencies:
-      - target: MGLinker
-    settings:
-      base:
-        INFOPLIST_FILE: MGLinkerLiveActivity/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.mglinker.app.liveactivity
-    info:
-      path: MGLinkerLiveActivity/Info.plist
-      properties:
-        CFBundleDisplayName: MG Linker Activity
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.widgetkit-extension
-
 schemes:
   MGLinker:
     build:
       targets:
         MGLinker: all
+        MGLinkerWidget: all
     run:
       config: Release

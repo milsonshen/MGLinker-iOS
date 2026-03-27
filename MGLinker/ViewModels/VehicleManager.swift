@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 import Combine
-import ActivityKit
 
 @MainActor
 class VehicleManager: ObservableObject {
@@ -13,7 +12,6 @@ class VehicleManager: ObservableObject {
     @Published var errorMessage: String?
     @Published var lastUpdateTime: Date?
     @Published var address: String?
-    @Published var isLiveActivityEnabled = false
     
     // 用户配置
     @AppStorage("carBrand") var carBrand: String = "名爵"
@@ -29,7 +27,6 @@ class VehicleManager: ObservableObject {
     @AppStorage("batteryCapacity") var batteryCapacity: Double = 0.0
     
     private let apiService = APIService.shared
-    private let liveActivityManager = LiveActivityManager.shared
     private var refreshTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
     
@@ -104,7 +101,7 @@ class VehicleManager: ObservableObject {
         let modelConfig = carConfigList.first { $0.brand == brandCode && $0.model == model }
         let colorConfig = modelConfig?.colors.first { $0.name == color }
         
-        // 保存配置到UserDefaults
+        // 保存配置
         carBrand = brand
         carModel = model
         carName = name
@@ -117,7 +114,7 @@ class VehicleManager: ObservableObject {
         batteryCapacity = modelConfig?.battery ?? 0.0
         isConfigured = true
         
-        // 保存到App Groups，供小组件使用
+        // 保存到App Groups
         let sharedDefaults = UserDefaults(suiteName: "group.com.mglinker.app")
         sharedDefaults?.set(brand, forKey: "carBrand")
         sharedDefaults?.set(model, forKey: "carModel")
@@ -169,57 +166,5 @@ class VehicleManager: ObservableObject {
             vehicleData: vehicleData,
             address: address
         )
-    }
-    
-    // MARK: - Live Activity 管理
-    func startLiveActivity() {
-        guard let data = vehicleData?.data else { return }
-        
-        let fuelRange = data.vehicle_value?.fuel_range ?? 0
-        let batteryRange = data.vehicle_value?.battery_pack_range ?? 0
-        let isLocked = data.vehicle_state?.lock ?? false
-        let isDoorOpen = data.vehicle_state?.door ?? false
-        let interiorTemperature = data.vehicle_value?.interior_temperature ?? 0.0
-        
-        liveActivityManager.startActivity(
-            carBrand: carBrand,
-            carModel: carModel,
-            carName: carName.isEmpty ? carModel : carName,
-            plateNumber: plateNumber,
-            fuelRange: fuelRange,
-            batteryRange: batteryRange,
-            isLocked: isLocked,
-            isDoorOpen: isDoorOpen,
-            interiorTemperature: interiorTemperature
-        )
-        
-        isLiveActivityEnabled = true
-    }
-    
-    func updateLiveActivity() {
-        guard let data = vehicleData?.data else { return }
-        
-        let fuelRange = data.vehicle_value?.fuel_range ?? 0
-        let batteryRange = data.vehicle_value?.battery_pack_range ?? 0
-        let isLocked = data.vehicle_state?.lock ?? false
-        let isDoorOpen = data.vehicle_state?.door ?? false
-        let interiorTemperature = data.vehicle_value?.interior_temperature ?? 0.0
-        
-        liveActivityManager.updateActivity(
-            fuelRange: fuelRange,
-            batteryRange: batteryRange,
-            isLocked: isLocked,
-            isDoorOpen: isDoorOpen,
-            interiorTemperature: interiorTemperature
-        )
-    }
-    
-    func stopLiveActivity() {
-        liveActivityManager.endActivity()
-        isLiveActivityEnabled = false
-    }
-    
-    func checkLiveActivityStatus() {
-        isLiveActivityEnabled = liveActivityManager.hasActiveActivity()
     }
 }

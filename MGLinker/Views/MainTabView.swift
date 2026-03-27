@@ -540,31 +540,7 @@ struct SettingsView: View {
                     }
                 }
                 
-                Section(header: Text("灵动岛")) {
-                    Toggle(isOn: $vehicleManager.isLiveActivityEnabled) {
-                        HStack {
-                            Image(systemName: "iphone")
-                                .foregroundColor(.green)
-                            Text("启用灵动岛")
-                        }
-                    }
-                    .onChange(of: vehicleManager.isLiveActivityEnabled) { newValue in
-                        if newValue {
-                            vehicleManager.startLiveActivity()
-                        } else {
-                            vehicleManager.stopLiveActivity()
-                        }
-                    }
-                    
-                    if vehicleManager.isLiveActivityEnabled {
-                        HStack {
-                            Text("状态")
-                            Spacer()
-                            Text("运行中")
-                                .foregroundColor(.green)
-                        }
-                    }
-                }
+
                 
                 Section {
                     Button("检查更新") {
